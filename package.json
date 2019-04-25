@@ -1,0 +1,25 @@
+{
+  "name": "rsi_project_1",
+  "version": "1.0.0",
+  "description": "Rezerwacja lotów",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node-dev --respawn --transpileOnly src",
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js",
+    "migrate": "npm run typeorm migration:run",
+    "makemigrations": "echo -n \"Enter migration name: \"; read name; npm run typeorm migration:generate -- -n $name;",
+    "tsc": "tsc"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/express": "^4.16.1",
+    "express": "^4.16.4",
+    "pg": "^7.9.0",
+    "reflect-metadata": "^0.1.13",
+    "soap-decorators": "^2.0.1",
+    "ts-node-dev": "^1.0.0-pre.32",
+    "typeorm": "^0.2.16",
+    "typescript": "^3.4.2"
+  }
+}

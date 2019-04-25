@@ -1,0 +1,15 @@
+{
+  "type": "postgres",
+  "host": "offtop.ml",
+  "port": 5432,
+  "username": "airlingo",
+  "password": "admin123",
+  "database": "airlingo",
+  "synchronize": false,
+  "logging": true,
+  "entities": ["src/entities/*.ts"],
+  "migrations": ["src/migrations/*.ts"],
+  "cli": {
+    "migrationsDir": "src/migrations"
+  }
+}
