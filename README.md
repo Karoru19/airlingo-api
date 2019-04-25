@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # AirLingo
 
 Przykładowy projekt z użyciem SOAP w języku innym niż java.
@@ -11,3 +12,6 @@ Przykładowy projekt z użyciem SOAP w języku innym niż java.
 ## Połączenie z bazą danych
 
 Konfiguracja połączenia znajduje się w pliku `ormconfig.json`
+=======
+# airlingo-api
+>>>>>>> 250e9089236fa499111e7aedaf39bcddac4f37d3
