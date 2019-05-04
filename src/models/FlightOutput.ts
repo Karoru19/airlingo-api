@@ -24,17 +24,3 @@ export class FlightOutput {
   @XSDElement
   plane: PlaneOutput;
 }
-
-@XSDComplexType
-export class FlightResultOutput {
-  @XSDElement
-  result: string;
-}
-
-@XSDComplexType
-export class FlightListOutput {
-  @XSDElement({
-    type: FlightOutput
-  })
-  flights: FlightOutput[];
-}

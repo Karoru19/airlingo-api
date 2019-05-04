@@ -1,16 +1,11 @@
 import { getManager, getRepository } from 'typeorm';
 import { SoapService, SoapOperation } from 'soap-decorators';
-import {
-  PlaneInput,
-  PlaneIdInput,
-  PlaneExtendedInput
-} from '../models/PlaneInput';
-import {
-  PlaneOutput,
-  PlaneResultOutput,
-  PlaneListOutput
-} from '../models/PlaneOutput';
+import { PlaneInput } from '../models/PlaneInput';
+import { PlaneOutput } from '../models/PlaneOutput';
 import { Plane } from '../entities/plane';
+import { IdInput } from '../models/IdInput';
+import { ResultOutput } from '../models/ResultOutput';
+import { PlaneListOutput } from '../models/PlaneListOutput';
 
 @SoapService({
   portName: 'PlanePort',
@@ -18,16 +13,16 @@ import { Plane } from '../entities/plane';
 })
 export class PlaneController {
   @SoapOperation(PlaneListOutput)
-  async list(data: PlaneIdInput): Promise<PlaneListOutput> {
+  async list(data: IdInput): Promise<PlaneListOutput> {
     const planes: Plane[] = await getRepository(Plane)
       .createQueryBuilder('plane')
       .getMany();
     const output = new PlaneListOutput();
-    output.result = [];
+    output.planes = [];
     planes.map(plane => {
       const planeOutput = new PlaneOutput();
       Object.keys(plane).map(key => (planeOutput[key] = plane[key]));
-      output.result.push(planeOutput);
+      output.planes.push(planeOutput);
     });
     return output;
   }
@@ -51,7 +46,7 @@ export class PlaneController {
   }
 
   @SoapOperation(PlaneOutput)
-  async detail(data: PlaneIdInput): Promise<PlaneOutput> {
+  async detail(data: IdInput): Promise<PlaneOutput> {
     const entityManager = getManager();
     const plane: Plane = await entityManager.findOne(Plane, data.id);
     const output = new PlaneOutput();
@@ -62,7 +57,7 @@ export class PlaneController {
   }
 
   @SoapOperation(PlaneOutput)
-  async update(data: PlaneExtendedInput): Promise<PlaneOutput> {
+  async update(data: PlaneInput): Promise<PlaneOutput> {
     const entityManager = getManager();
     const plane = await entityManager.findOne(Plane, data.id);
     const output = new PlaneOutput();
@@ -74,11 +69,11 @@ export class PlaneController {
     return output;
   }
 
-  @SoapOperation(PlaneResultOutput)
-  async delete(data: PlaneIdInput): Promise<PlaneResultOutput> {
+  @SoapOperation(ResultOutput)
+  async delete(data: IdInput): Promise<ResultOutput> {
     const entityManager = getManager();
     const { raw, affected } = await entityManager.delete(Plane, data.id);
-    const output = new PlaneResultOutput();
+    const output = new ResultOutput();
     output.result = affected === 1 ? 'success' : 'failed';
     return output;
   }

@@ -2,18 +2,17 @@ import { getManager, getRepository } from 'typeorm';
 import { SoapService, SoapOperation } from 'soap-decorators';
 import { Plane } from '../entities/plane';
 import {
-  FlightListOutput,
   FlightOutput,
-  FlightResultOutput
 } from '../models/FlightOutput';
 import {
-  FlightIdInput,
   FlightInput,
-  FlightExtendedInput
 } from '../models/FlightInput';
 import { Flight } from '../entities/flight';
 import { dateFormat } from '../shared/date-format';
 import { PlaneOutput } from '../models/PlaneOutput';
+import { IdInput } from '../models/IdInput';
+import { FlightListOutput } from '../models/FlightListOutput';
+import { ResultOutput } from '../models/ResultOutput';
 
 @SoapService({
   portName: 'FlightPort',
@@ -21,19 +20,18 @@ import { PlaneOutput } from '../models/PlaneOutput';
 })
 export class FlightController {
   @SoapOperation(FlightListOutput)
-  async list(data: FlightIdInput): Promise<FlightListOutput> {
+  async list(data: IdInput): Promise<FlightListOutput> {
     const flights: Flight[] = await getRepository(Flight)
       .createQueryBuilder('flight')
       .leftJoinAndSelect('flight.plane', 'plane')
       .getMany();
     const output = new FlightListOutput();
-    output.result = [];
+    output.flights = [];
     flights.map(flight => {
       const flightOutput = new FlightOutput();
       Object.keys(flight).map(key => (flightOutput[key] = flight[key]));
       flightOutput.date = dateFormat(flight.date);
-      output.result.push(flightOutput);
-      console.log(flight.plane);
+      output.flights.push(flightOutput);
     });
     return output;
   }
@@ -66,7 +64,7 @@ export class FlightController {
   }
 
   @SoapOperation(FlightOutput)
-  async detail(data: FlightIdInput): Promise<FlightOutput> {
+  async detail(data: IdInput): Promise<FlightOutput> {
     const flight: Flight = await getRepository(Flight)
       .createQueryBuilder('flight')
       .where('flight.id = :id', { id: data.id })
@@ -81,7 +79,7 @@ export class FlightController {
   }
 
   @SoapOperation(FlightOutput)
-  async update(data: FlightExtendedInput): Promise<FlightOutput> {
+  async update(data: FlightInput): Promise<FlightOutput> {
     const entityManager = getManager();
     const flight = await entityManager.findOne(Flight, data.id);
     const output = new FlightOutput();
@@ -94,11 +92,11 @@ export class FlightController {
     return output;
   }
 
-  @SoapOperation(FlightResultOutput)
-  async delete(data: FlightIdInput): Promise<FlightResultOutput> {
+  @SoapOperation(ResultOutput)
+  async delete(data: IdInput): Promise<ResultOutput> {
     const entityManager = getManager();
     const { affected } = await entityManager.delete(Flight, data.id);
-    const output = new FlightResultOutput();
+    const output = new ResultOutput();
     output.result = affected === 1 ? 'success' : 'failed';
     return output;
   }

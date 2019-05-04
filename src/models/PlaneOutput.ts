@@ -26,17 +26,3 @@ export class PlaneOutput {
   @XSDElement
   handLuggageLimit: number;
 }
-
-@XSDComplexType
-export class PlaneResultOutput {
-  @XSDElement
-  result: string;
-}
-
-@XSDComplexType
-export class PlaneListOutput {
-  @XSDElement({
-    type: PlaneOutput
-  })
-  result: PlaneOutput[];
-}
