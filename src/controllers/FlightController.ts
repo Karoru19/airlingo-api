@@ -1,18 +1,14 @@
 import { getManager, getRepository } from 'typeorm';
 import { SoapService, SoapOperation } from 'soap-decorators';
 import { Plane } from '../entities/plane';
-import {
-  FlightOutput,
-} from '../models/FlightOutput';
-import {
-  FlightInput,
-} from '../models/FlightInput';
+import { FlightOutput } from '../models/outputs/FlightOutput';
+import { FlightInput } from '../models/inputs/FlightInput';
 import { Flight } from '../entities/flight';
 import { dateFormat } from '../shared/date-format';
-import { PlaneOutput } from '../models/PlaneOutput';
-import { IdInput } from '../models/IdInput';
-import { FlightListOutput } from '../models/FlightListOutput';
-import { ResultOutput } from '../models/ResultOutput';
+import { PlaneOutput } from '../models/outputs/PlaneOutput';
+import { IdInput } from '../models/inputs/IdInput';
+import { FlightListOutput } from '../models/outputs/FlightListOutput';
+import { ResultOutput } from '../models/outputs/ResultOutput';
 
 @SoapService({
   portName: 'FlightPort',

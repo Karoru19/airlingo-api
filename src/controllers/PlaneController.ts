@@ -1,11 +1,11 @@
 import { getManager, getRepository } from 'typeorm';
 import { SoapService, SoapOperation } from 'soap-decorators';
-import { PlaneInput } from '../models/PlaneInput';
-import { PlaneOutput } from '../models/PlaneOutput';
+import { PlaneInput } from '../models/inputs/PlaneInput';
+import { PlaneOutput } from '../models/outputs/PlaneOutput';
 import { Plane } from '../entities/plane';
-import { IdInput } from '../models/IdInput';
-import { ResultOutput } from '../models/ResultOutput';
-import { PlaneListOutput } from '../models/PlaneListOutput';
+import { IdInput } from '../models/inputs/IdInput';
+import { ResultOutput } from '../models/outputs/ResultOutput';
+import { PlaneListOutput } from '../models/outputs/PlaneListOutput';
 
 @SoapService({
   portName: 'PlanePort',
