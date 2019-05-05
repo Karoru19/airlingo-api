@@ -6,6 +6,7 @@ import { UserOutput } from '../models/outputs/UserOutput';
 import { User } from '../entities/user';
 import { LoginInput } from '../models/inputs/LoginInput';
 import { UserListOutput } from '../models/outputs/UserListOutput';
+import { ResultOutput } from '../models/outputs/ResultOutput';
 
 @SoapService({
   portName: 'UserPort',
@@ -43,6 +44,24 @@ export class UserController {
       .createQueryBuilder('user')
       .getMany();
     const output = new UserListOutput(users);
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  a(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  b(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  c(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
     return output;
   }
 }

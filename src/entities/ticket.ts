@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  Index
+} from 'typeorm';
 import { Flight } from './flight';
 import { User } from './user';
 
@@ -17,10 +23,10 @@ export class Ticket {
   email: string;
 
   @ManyToOne(type => User, user => user.tickets, { nullable: true })
-  user: User;
+  user: User | number;
 
   @ManyToOne(type => Flight, flight => flight.tickets)
-  flight: Flight;
+  flight: Flight | number;
 
   @Column()
   price: number;
@@ -38,5 +44,6 @@ export class Ticket {
   pdf: string;
 
   @Column()
+  @Index({ unique: true })
   token: string;
 }

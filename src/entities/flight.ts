@@ -17,10 +17,13 @@ export class Flight {
   date: Date;
 
   @Column()
-  from: string; // In $
+  from: string;
 
   @Column()
   to: string;
+
+  @Column({ default: '16:00' })
+  departureTime: string;
 
   @Column()
   duration: number;

@@ -131,4 +131,40 @@ export class FlightController {
     const output = new FlightListOutput(flights);
     return output;
   }
+
+  @SoapOperation(ResultOutput)
+  a(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  b(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  c(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  d(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  e(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
+
+  @SoapOperation(ResultOutput)
+  f(data: IdInput): ResultOutput {
+    const output = new ResultOutput();
+    return output;
+  }
 }
