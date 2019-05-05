@@ -7,7 +7,6 @@ import { Flight } from '../entities/flight';
 import { IdInput } from '../models/inputs/IdInput';
 import { FlightListOutput } from '../models/outputs/FlightListOutput';
 import { ResultOutput } from '../models/outputs/ResultOutput';
-import { Converter } from '../shared/converter';
 import { PlaneOutput } from '../models/outputs/PlaneOutput';
 import { SearchInput } from '../models/inputs/SearchInput';
 
