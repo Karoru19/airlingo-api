@@ -26,10 +26,7 @@ export class PlaneController {
     const entityManager = getManager();
     const plane = data.toPlane();
     let output = new PlaneOutput();
-    const { identifiers } = await entityManager.insert(
-      Plane,
-      plane
-    );
+    const { identifiers } = await entityManager.insert(Plane, plane);
     const id = identifiers[identifiers.length - 1].id;
     if (id > 0) {
       plane.id = id;

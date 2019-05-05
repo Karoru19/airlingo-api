@@ -2,7 +2,7 @@ import { XSDComplexType, XSDElement } from 'xsd-decorators';
 import { User } from '../../entities/user';
 
 @XSDComplexType
-export class UserOuput {
+export class UserOutput {
   @XSDElement
   id: number;
 
