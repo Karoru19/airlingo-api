@@ -87,6 +87,7 @@ export class FlightController {
       .createQueryBuilder('flight')
       .leftJoinAndSelect('flight.plane', 'plane')
       .leftJoin('flight.tickets', 'ticket')
+      .where('flight."date" > current_date')
       .groupBy('flight.id')
       .addGroupBy('flight.date')
       .addGroupBy('flight.from')
@@ -103,10 +104,22 @@ export class FlightController {
       .addGroupBy('plane.handLuggageLimit')
       .having('COUNT(ticket.id) < plane.seats');
     if (data.business) {
-      query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.business = TRUE AND t."flightId" = flight.id) < plane.seatsInBusinessClass')
+      if (data.window) {
+        query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.business = TRUE AND t.window = TRUE AND t."flightId" = flight.id) < (plane.seatsInBusinessClass / plane.seatsInRow)')
+      } else {
+        query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.business = TRUE AND t."flightId" = flight.id) < plane.seatsInBusinessClass')
+      }
+    } else if (data.window) {
+      query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.window = TRUE AND t."flightId" = flight.id) < ((plane.seats - plane.seatsInBusinessClass) / plane.seatsInRow)')
     }
-    if (data.window) {
-      query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.window = TRUE AND t."flightId" = flight.id) < plane.seatsInBusinessClass')
+    if (!!data.from) {
+      query.andWhere('flight."from" ilike :from', { from: data.from })
+    }
+    if (!!data.to) {
+      query.andWhere('flight."to" ilike :to', { to: data.to })
+    }
+    if (!!data.date) {
+      query.andWhere('flight."date" = :date', { date: data.date })
     }
     const flights: Flight[] = await query.getMany();
     const output = new FlightListOutput(flights);
