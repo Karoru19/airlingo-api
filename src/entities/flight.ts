@@ -29,7 +29,7 @@ export class Flight {
   distance: number;
 
   @ManyToOne(type => Plane, plane => plane.flights)
-  plane: number;
+  plane: Plane | number;
 
   @OneToMany(type => Ticket, ticket => ticket.flight)
   tickets: Ticket[];

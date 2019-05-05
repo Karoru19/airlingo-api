@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Index } from 'typeorm';
 import { Group } from '../enums/group';
 import { Ticket } from './ticket';
 
@@ -14,6 +14,7 @@ export class User {
   lastName: string;
 
   @Column()
+  @Index({ unique: true })
   email: string;
 
   @Column()

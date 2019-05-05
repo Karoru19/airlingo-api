@@ -1,4 +1,5 @@
 import { XSDComplexType, XSDElement } from 'xsd-decorators';
+import { Flight } from '../../entities/flight';
 
 @XSDComplexType
 export class FlightInput {
@@ -22,4 +23,16 @@ export class FlightInput {
 
   @XSDElement
   plane: number;
+
+  toFlight(): Flight {
+    const flight = new Flight();
+    flight.id = this.id;
+    flight.from = this.from;
+    flight.to = this.to;
+    flight.date = this.date;
+    flight.distance = this.distance;
+    flight.duration = this.duration;
+    flight.plane = this.plane;
+    return flight;
+  }
 }

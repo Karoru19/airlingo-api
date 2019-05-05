@@ -1,4 +1,5 @@
 import { XSDComplexType, XSDElement } from 'xsd-decorators';
+import { Plane } from '../../entities/plane';
 
 @XSDComplexType
 export class PlaneInput {
@@ -25,4 +26,17 @@ export class PlaneInput {
 
   @XSDElement
   handLuggageLimit: number;
+
+  toPlane(): Plane {
+    const plane = new Plane();
+    plane.id = this.id;
+    plane.name = this.name;
+    plane.pricePerKm = this.pricePerKm;
+    plane.seats = this.seats;
+    plane.seatsInRow = this.seatsInRow;
+    plane.seatsInBusinessClass = this.seatsInBusinessClass;
+    plane.luggageLimit = this.luggageLimit;
+    plane.handLuggageLimit = this.handLuggageLimit;
+    return plane;
+  }
 }

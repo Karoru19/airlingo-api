@@ -9,7 +9,7 @@ import {
 import { User } from './user';
 
 @Entity()
-export class AuthToken {
+export class ResetToken {
   @PrimaryGeneratedColumn()
   id: number;
 

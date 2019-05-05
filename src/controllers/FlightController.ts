@@ -1,14 +1,15 @@
-import { getManager, getRepository } from 'typeorm';
+import { getManager, getRepository, SelectQueryBuilder } from 'typeorm';
 import { SoapService, SoapOperation } from 'soap-decorators';
 import { Plane } from '../entities/plane';
 import { FlightOutput } from '../models/outputs/FlightOutput';
 import { FlightInput } from '../models/inputs/FlightInput';
 import { Flight } from '../entities/flight';
-import { dateFormat } from '../shared/date-format';
-import { PlaneOutput } from '../models/outputs/PlaneOutput';
 import { IdInput } from '../models/inputs/IdInput';
 import { FlightListOutput } from '../models/outputs/FlightListOutput';
 import { ResultOutput } from '../models/outputs/ResultOutput';
+import { Converter } from '../shared/converter';
+import { PlaneOutput } from '../models/outputs/PlaneOutput';
+import { SearchInput } from '../models/inputs/SearchInput';
 
 @SoapService({
   portName: 'FlightPort',
@@ -21,23 +22,15 @@ export class FlightController {
       .createQueryBuilder('flight')
       .leftJoinAndSelect('flight.plane', 'plane')
       .getMany();
-    const output = new FlightListOutput();
-    output.flights = [];
-    flights.map(flight => {
-      const flightOutput = new FlightOutput();
-      Object.keys(flight).map(key => (flightOutput[key] = flight[key]));
-      flightOutput.date = dateFormat(flight.date);
-      output.flights.push(flightOutput);
-    });
+    const output = new FlightListOutput(flights);
     return output;
   }
 
   @SoapOperation(FlightOutput)
   async create(data: FlightInput): Promise<FlightOutput> {
     const entityManager = getManager();
-    const flight = new Flight();
-    const output = new FlightOutput();
-    Object.keys(data).map(key => (flight[key] = data[key]));
+    const flight = data.toFlight();
+    let output = new FlightOutput();
 
     const plane: Plane = await getRepository(Plane)
       .createQueryBuilder('plane')
@@ -48,12 +41,8 @@ export class FlightController {
       const { identifiers } = await entityManager.insert(Flight, flight);
       const id = identifiers[identifiers.length - 1].id;
       if (id > 0) {
-        Object.keys(flight).map(key => (output[key] = flight[key]));
-        output.id = id;
-        output.date = dateFormat(flight.date);
-        const planeOutput = new PlaneOutput();
-        Object.keys(plane).map(key => (planeOutput[key] = plane[key]));
-        output.plane = planeOutput;
+        flight.id = id;
+        output = new FlightOutput(flight);
       }
     }
     return output;
@@ -66,11 +55,7 @@ export class FlightController {
       .where('flight.id = :id', { id: data.id })
       .leftJoinAndSelect('flight.plane', 'plane')
       .getOne();
-    const output = new FlightOutput();
-    if (flight) {
-      Object.keys(flight).map(key => (output[key] = flight[key]));
-      output.date = dateFormat(flight.date);
-    }
+    const output = new FlightOutput(flight);
     return output;
   }
 
@@ -78,12 +63,12 @@ export class FlightController {
   async update(data: FlightInput): Promise<FlightOutput> {
     const entityManager = getManager();
     const flight = await entityManager.findOne(Flight, data.id);
-    const output = new FlightOutput();
+    let output = new FlightOutput();
     if (flight) {
-      Object.keys(data).map(key => (flight[key] = data[key]));
-      await entityManager.update(Plane, flight.id, flight);
-      Object.keys(flight).map(key => (output[key] = flight[key]));
-      output.date = dateFormat(flight.date);
+      await entityManager.update(Flight, flight.id, data.toFlight());
+      output = new FlightOutput(data.toFlight());
+      const plane = await entityManager.findOne(Plane, data.plane);
+      output.plane = new PlaneOutput(plane);
     }
     return output;
   }
@@ -94,6 +79,38 @@ export class FlightController {
     const { affected } = await entityManager.delete(Flight, data.id);
     const output = new ResultOutput();
     output.result = affected === 1 ? 'success' : 'failed';
+    return output;
+  }
+
+  @SoapOperation(FlightListOutput)
+  async search(data: SearchInput): Promise<FlightListOutput> {
+    const query: SelectQueryBuilder<Flight> = getRepository(Flight)
+      .createQueryBuilder('flight')
+      .leftJoinAndSelect('flight.plane', 'plane')
+      .leftJoin('flight.tickets', 'ticket')
+      .groupBy('flight.id')
+      .addGroupBy('flight.date')
+      .addGroupBy('flight.from')
+      .addGroupBy('flight.to')
+      .addGroupBy('flight.duration')
+      .addGroupBy('flight.distance')
+      .addGroupBy('plane.id')
+      .addGroupBy('plane.name')
+      .addGroupBy('plane.pricePerKm')
+      .addGroupBy('plane.seats')
+      .addGroupBy('plane.seatsInRow')
+      .addGroupBy('plane.seatsInBusinessClass')
+      .addGroupBy('plane.luggageLimit')
+      .addGroupBy('plane.handLuggageLimit')
+      .having('COUNT(ticket.id) < plane.seats');
+    if (data.business) {
+      query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.business = TRUE AND t."flightId" = flight.id) < plane.seatsInBusinessClass')
+    }
+    if (data.window) {
+      query.andHaving('(SELECT COUNT(t.id) FROM ticket t WHERE t.window = TRUE AND t."flightId" = flight.id) < plane.seatsInBusinessClass')
+    }
+    const flights: Flight[] = await query.getMany();
+    const output = new FlightListOutput(flights);
     return output;
   }
 }

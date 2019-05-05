@@ -17,30 +17,23 @@ export class PlaneController {
     const planes: Plane[] = await getRepository(Plane)
       .createQueryBuilder('plane')
       .getMany();
-    const output = new PlaneListOutput();
-    output.planes = [];
-    planes.map(plane => {
-      const planeOutput = new PlaneOutput();
-      Object.keys(plane).map(key => (planeOutput[key] = plane[key]));
-      output.planes.push(planeOutput);
-    });
+    const output = new PlaneListOutput(planes);
     return output;
   }
 
   @SoapOperation(PlaneOutput)
   async create(data: PlaneInput): Promise<PlaneOutput> {
     const entityManager = getManager();
-    const plane = new Plane();
-    const output = new PlaneOutput();
-    Object.keys(data).map(key => (plane[key] = data[key]));
-    const { identifiers, generatedMaps, raw } = await entityManager.insert(
+    const plane = data.toPlane();
+    let output = new PlaneOutput();
+    const { identifiers } = await entityManager.insert(
       Plane,
       plane
     );
     const id = identifiers[identifiers.length - 1].id;
     if (id > 0) {
-      Object.keys(plane).map(key => (output[key] = plane[key]));
-      output.id = id;
+      plane.id = id;
+      output = new PlaneOutput(plane);
     }
     return output;
   }
@@ -49,10 +42,7 @@ export class PlaneController {
   async detail(data: IdInput): Promise<PlaneOutput> {
     const entityManager = getManager();
     const plane: Plane = await entityManager.findOne(Plane, data.id);
-    const output = new PlaneOutput();
-    if (plane) {
-      Object.keys(plane).map(key => (output[key] = plane[key]));
-    }
+    const output = new PlaneOutput(plane);
     return output;
   }
 
@@ -60,11 +50,10 @@ export class PlaneController {
   async update(data: PlaneInput): Promise<PlaneOutput> {
     const entityManager = getManager();
     const plane = await entityManager.findOne(Plane, data.id);
-    const output = new PlaneOutput();
+    let output = new PlaneOutput();
     if (plane) {
-      Object.keys(data).map(key => (plane[key] = data[key]));
-      await entityManager.update(Plane, plane.id, plane);
-      Object.keys(plane).map(key => (output[key] = plane[key]));
+      await entityManager.update(Plane, plane.id, data.toPlane());
+      output = new PlaneOutput(plane);
     }
     return output;
   }

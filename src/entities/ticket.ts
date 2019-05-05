@@ -28,6 +28,12 @@ export class Ticket {
   @Column({ nullable: true })
   discount: number;
 
+  @Column({ default: false })
+  window: boolean;
+
+  @Column({ default: false })
+  business: boolean;
+
   @Column({ nullable: true })
   pdf: string;
 
