@@ -92,6 +92,7 @@ export class FlightController {
       .addGroupBy('flight.date')
       .addGroupBy('flight.from')
       .addGroupBy('flight.to')
+      .addGroupBy('flight.departureTime')
       .addGroupBy('flight.duration')
       .addGroupBy('flight.distance')
       .addGroupBy('plane.id')

@@ -18,6 +18,9 @@ export class FlightOutput {
   to: string;
 
   @XSDElement
+  departureTime: string;
+
+  @XSDElement
   duration: number;
 
   @XSDElement
@@ -32,9 +35,10 @@ export class FlightOutput {
       this.date = dateFormat(flight.date);
       this.from = flight.from;
       this.to = flight.to;
+      this.departureTime = flight.departureTime;
       this.duration = flight.duration;
       this.distance = flight.distance;
-      if (typeof (flight.plane) !== "number") {
+      if (typeof flight.plane !== 'number') {
         this.plane = new PlaneOutput(flight.plane);
       }
     }

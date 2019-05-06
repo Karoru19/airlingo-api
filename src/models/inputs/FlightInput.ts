@@ -16,6 +16,9 @@ export class FlightInput {
   to: string;
 
   @XSDElement
+  departureTime: string;
+
+  @XSDElement
   duration: number;
 
   @XSDElement
@@ -29,6 +32,7 @@ export class FlightInput {
     flight.id = this.id;
     flight.from = this.from;
     flight.to = this.to;
+    flight.departureTime = this.departureTime;
     flight.date = this.date;
     flight.distance = this.distance;
     flight.duration = this.duration;
