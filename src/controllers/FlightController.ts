@@ -126,10 +126,12 @@ export class FlightController {
       query.andWhere('flight."to" ilike :to', { to: data.to });
     }
     if (!!data.date) {
-      query.andWhere('flight."date" = :date', { date: data.date });
+      query.andWhere('flight."date" = :date', { date: new Date(data.date) });
     }
+    console.log(data)
     const flights: Flight[] = await query.getMany();
     const output = new FlightListOutput(flights);
+    console.log(output)
     return output;
   }
 

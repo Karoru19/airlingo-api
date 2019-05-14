@@ -3,7 +3,7 @@ import { XSDComplexType, XSDElement } from 'xsd-decorators';
 @XSDComplexType
 export class SearchInput {
   @XSDElement
-  date: Date;
+  date: string;
 
   @XSDElement
   from: string;
