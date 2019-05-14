@@ -20,6 +20,7 @@ export class FlightController {
     const flights: Flight[] = await getRepository(Flight)
       .createQueryBuilder('flight')
       .leftJoinAndSelect('flight.plane', 'plane')
+      .where('flight."date" > current_date')
       .getMany();
     const output = new FlightListOutput(flights);
     return output;
@@ -126,46 +127,10 @@ export class FlightController {
       query.andWhere('flight."to" ilike :to', { to: data.to });
     }
     if (!!data.date) {
-      query.andWhere('flight."date" = :date', { date: data.date });
+      query.andWhere('flight."date" = :date', { date: new Date(data.date) });
     }
     const flights: Flight[] = await query.getMany();
     const output = new FlightListOutput(flights);
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  a(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  b(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  c(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  d(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  e(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  f(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
     return output;
   }
 }

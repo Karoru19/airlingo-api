@@ -37,31 +37,4 @@ export class UserController {
     const output = new UserOutput(user);
     return output;
   }
-
-  @SoapOperation(UserListOutput)
-  async list(id: IdInput): Promise<UserListOutput> {
-    const users: User[] = await getRepository(User)
-      .createQueryBuilder('user')
-      .getMany();
-    const output = new UserListOutput(users);
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  a(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  b(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  c(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
 }

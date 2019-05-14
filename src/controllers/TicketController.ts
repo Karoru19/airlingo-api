@@ -95,27 +95,15 @@ export class TicketController {
     return output;
   }
 
-  @SoapOperation(ResultOutput)
-  a(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  b(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  c(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
-    return output;
-  }
-
-  @SoapOperation(ResultOutput)
-  d(data: IdInput): ResultOutput {
-    const output = new ResultOutput();
+  @SoapOperation(TicketOutput)
+  async detail(data: IdInput): Promise<TicketOutput> {
+    const ticket: Ticket = await getRepository(Ticket)
+      .createQueryBuilder('ticket')
+      .where('ticket.id = :id', { id: data.id })
+      .leftJoinAndSelect('ticket.flight', 'flight')
+      .leftJoinAndSelect('flight.plane', 'plane')
+      .getOne();
+    const output = new TicketOutput(ticket);
     return output;
   }
 }
